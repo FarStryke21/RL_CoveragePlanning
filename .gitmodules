@@ -1,0 +1,6 @@
+[submodule "viewpointPlaygroundEnv"]
+	path = viewpointPlaygroundEnv
+	url = https://github.com/FarStryke21/viewpointPlaygroundEnv
+[submodule "rl-baselines3-zoo"]
+	path = rl-baselines3-zoo
+	url = https://github.com/FarStryke21/rl-baselines3-zoo
