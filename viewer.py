@@ -23,7 +23,7 @@ def visualize_model(model_path, action_history_path):
     
     # read the action history
     action_history = np.genfromtxt(action_history_path, delimiter=',')
-    if len(action_history) >= 10:
+    if len(action_history) >= 30:
         action_history = action_history[:10]
     #action history is a list of poses. Generate a set of origins with the z axes pointing towards the model origin
     origins = []
