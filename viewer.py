@@ -18,8 +18,14 @@ def rotation_matrix_from_axis_angle(axis, angle):
 
     return rotation_matrix
 
-def visualize_model(model_path, action_history_path):
+def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     mesh = o3d.io.read_triangle_mesh(model_path)
+    mesh.scale(0.001, center=mesh.get_center())
+    mesh.translate(-mesh.get_center())
+    mesh = mesh.simplify_quadric_decimation(mesh_resolution)
+    
+    print(f"Mesh Triangle Count: {len(mesh.triangles)}")
+
     mesh.paint_uniform_color([0.75, 0.75, 0])
     
     # read the action history
@@ -30,7 +36,9 @@ def visualize_model(model_path, action_history_path):
     action_history = np.unique(action_history, axis=0)
     print("Unique action history")
     print(action_history.shape)
+
     if len(action_history) >= 50:
+        print("Too many poses to render! Truncating action history to 50...")
         action_history = action_history[:50]
     #action history is a list of poses. Generate a set of origins with the z axes pointing towards the model origin
     origins = []
@@ -55,7 +63,7 @@ def visualize_model(model_path, action_history_path):
     o3d.visualization.draw_geometries([mesh] + origins)
 
 if __name__ == "__main__":
-    model_path = '/home/aman/Desktop/RL_CoveragePlanning/viewpointPlaygroundEnv/meshes/stanford_bunny.obj'
-    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/poses.csv'
+    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/test_2.obj'
+    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/poses_test_2.csv'
 
     visualize_model(model_path, action_history_path)
