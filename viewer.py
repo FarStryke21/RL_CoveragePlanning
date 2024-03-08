@@ -20,11 +20,18 @@ def rotation_matrix_from_axis_angle(axis, angle):
 
 def visualize_model(model_path, action_history_path):
     mesh = o3d.io.read_triangle_mesh(model_path)
+    mesh.paint_uniform_color([0.75, 0.75, 0])
     
     # read the action history
+    print("Reading action history")
     action_history = np.genfromtxt(action_history_path, delimiter=',')
-    if len(action_history) >= 30:
-        action_history = action_history[:10]
+    # remove duplicates
+    print(f"Action history Shape: {action_history.shape}")
+    action_history = np.unique(action_history, axis=0)
+    print("Unique action history")
+    print(action_history.shape)
+    if len(action_history) >= 50:
+        action_history = action_history[:50]
     #action history is a list of poses. Generate a set of origins with the z axes pointing towards the model origin
     origins = []
     
