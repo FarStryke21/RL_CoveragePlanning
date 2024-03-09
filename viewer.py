@@ -20,9 +20,8 @@ def rotation_matrix_from_axis_angle(axis, angle):
 
 def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     mesh = o3d.io.read_triangle_mesh(model_path)
-    mesh.scale(0.001, center=mesh.get_center())
+    mesh.scale(0.01, center=mesh.get_center())
     mesh.translate(-mesh.get_center())
-    mesh = mesh.simplify_quadric_decimation(mesh_resolution)
     
     print(f"Mesh Triangle Count: {len(mesh.triangles)}")
 
@@ -63,7 +62,7 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     o3d.visualization.draw_geometries([mesh] + origins)
 
 if __name__ == "__main__":
-    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/test_2.obj'
-    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/poses_test_2.csv'
+    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/test_0.obj'
+    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_0_poses.csv'
 
     visualize_model(model_path, action_history_path)
