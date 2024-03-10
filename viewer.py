@@ -18,11 +18,27 @@ def rotation_matrix_from_axis_angle(axis, angle):
 
     return rotation_matrix
 
+def create_coordinate_frame(origin):
+    # Create axes lines
+    axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=5.0)
+    axes.translate(origin)
+    
+    z_axis = np.array([0, 0, 1])
+    pose_to_origin =  - origin
+    pose_to_origin = pose_to_origin / np.linalg.norm(pose_to_origin)
+    axis = np.cross(z_axis, pose_to_origin)
+    angle = np.arccos(np.dot(z_axis, pose_to_origin))
+    rotation_matrix = rotation_matrix_from_axis_angle(axis, angle)
+    # invert the rotation matrix
+    axes.rotate(rotation_matrix, center=origin)
+
+    return axes
+
 def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     mesh = o3d.io.read_triangle_mesh(model_path)
-    mesh.scale(0.01, center=mesh.get_center())
-    mesh.translate(-mesh.get_center())
-    
+    # mesh.scale(0.01, center=mesh.get_center())
+    mesh = mesh.translate(-mesh.get_center())
+    print(f"Mesh centre: {mesh.get_center()}")
     print(f"Mesh Triangle Count: {len(mesh.triangles)}")
 
     mesh.paint_uniform_color([0.75, 0.75, 0])
@@ -35,7 +51,14 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     action_history = np.unique(action_history, axis=0)
     print("Unique action history")
     print(action_history.shape)
+    actions = action_history
+    # eliminate poses that are too close to each other
+    action_history = [actions[0]]
+    for i in range(1, len(actions)):
+        if np.linalg.norm(actions[i] - actions[i-1]) > 1:
+            action_history.append(actions[i])
 
+    print(f"Filtered Action history Shape: {len(action_history)}")
     if len(action_history) >= 50:
         print("Too many poses to render! Truncating action history to 50...")
         action_history = action_history[:50]
@@ -43,26 +66,16 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     origins = []
     
     for pose in action_history:
-        origin = o3d.geometry.TriangleMesh.create_coordinate_frame()
-        origin.scale(0.03, center=pose)
-        # rotate such that the z axis points towards the model origin
-        z_axis = np.array([0, 0, 1])
-        pose_to_origin =  mesh.get_center() - pose
-        pose_to_origin = pose_to_origin / np.linalg.norm(pose_to_origin)
-        axis = np.cross(z_axis, pose_to_origin)
-        angle = np.arccos(np.dot(z_axis, pose_to_origin))
-        rotation_matrix = rotation_matrix_from_axis_angle(axis, angle)
-        # invert the rotation matrix
-        origin.rotate(rotation_matrix, center=pose)
-
-        # origin.paint_uniform_color([1, 0, 0])
+        origin = create_coordinate_frame(pose)
         
         origins.append(origin)
 
-    o3d.visualization.draw_geometries([mesh] + origins)
+    sphere = o3d.geometry.TriangleMesh.create_sphere(radius=5)
+
+    o3d.visualization.draw_geometries([mesh] + origins + [sphere])
 
 if __name__ == "__main__":
-    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/test_0.obj'
+    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/modified/test_0.obj'
     action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_0_poses.csv'
 
     visualize_model(model_path, action_history_path)
