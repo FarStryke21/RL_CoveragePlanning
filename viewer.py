@@ -55,7 +55,7 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     # eliminate poses that are too close to each other
     action_history = [actions[0]]
     for i in range(1, len(actions)):
-        if np.linalg.norm(actions[i] - actions[i-1]) > 0.01:
+        if np.linalg.norm(actions[i] - actions[i-1]) > 1:
             action_history.append(actions[i])
 
     print(f"Filtered Action history Shape: {len(action_history)}")
@@ -75,7 +75,7 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     o3d.visualization.draw_geometries([mesh] + origins + [sphere])
 
 if __name__ == "__main__":
-    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/modified/test_0.obj'
-    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_0_poses.csv'
+    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/modified/test_1.obj'
+    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_1_poses.csv'
 
     visualize_model(model_path, action_history_path)
