@@ -20,9 +20,9 @@ def rotation_matrix_from_axis_angle(axis, angle):
 
 def create_coordinate_frame(origin):
     # Create axes lines
-    axes = o3d.geometry.TriangleMesh.create_coordinate_frame(size=5.0)
+    axes = o3d.geometry.TriangleMesh.create_arrow()
     axes.translate(origin)
-    
+    axes.paint_uniform_color([1, 0, 0])
     z_axis = np.array([0, 0, 1])
     pose_to_origin =  - origin
     pose_to_origin = pose_to_origin / np.linalg.norm(pose_to_origin)
@@ -55,8 +55,17 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
     # eliminate poses that are too close to each other
     action_history = [actions[0]]
     for i in range(1, len(actions)):
-        if np.linalg.norm(actions[i] - actions[i-1]) > 1:
+        if np.linalg.norm(actions[i] - actions[i-1]) > 30:
             action_history.append(actions[i])
+
+    # Randomly choose 7 times from the action history
+    action_history = action_history[::len(action_history)//7]
+            
+    # actions = action_history
+    # action_history = [actions[0]]
+    # for i in range(1, len(actions)):
+    #     if np.linalg.norm(actions[i] - actions[i-1]) > 60:
+    #         action_history.append(actions[i])
 
     print(f"Filtered Action history Shape: {len(action_history)}")
     if len(action_history) >= 50:
@@ -70,12 +79,13 @@ def visualize_model(model_path, action_history_path, mesh_resolution=4968):
         
         origins.append(origin)
 
-    sphere = o3d.geometry.TriangleMesh.create_sphere(radius=5)
-
-    o3d.visualization.draw_geometries([mesh] + origins + [sphere])
+    mesh.paint_uniform_color([0.75, 0.75, 0])
+    # origin = o3d.geometry.TriangleMesh.create_coordinate_frame(size=10.0, origin=[0, 0, 0])
+    mesh.scale(2, center=mesh.get_center())
+    o3d.visualization.draw_geometries([mesh] + origins + [origin], mesh_show_wireframe=True)
 
 if __name__ == "__main__":
-    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/modified/test_1.obj'
-    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_1_poses.csv'
+    model_path = '/home/aman/Desktop/RL_CoveragePlanning/test_models/modified/test_7.obj'
+    action_history_path = '/home/aman/Desktop/RL_CoveragePlanning/action/test_7_poses.csv'
 
     visualize_model(model_path, action_history_path)
