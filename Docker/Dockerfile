@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends\
     htop \
     sudo \
     unzip \
+    swig \
+    build-essential \
     zip \
     libgomp1 \
     ca-certificates \
@@ -22,7 +24,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends\
     lsb-release \ 
     gedit net-tools iputils-ping \
     python3 \
-    python3-pip \
+    python3-pip python3-dev \
     python3-wstool \
     software-properties-common \
     && apt-get clean \
@@ -49,22 +51,50 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 # Update all packages
 RUN sudo apt update && sudo apt upgrade -y
 
-# Set the working directory
-WORKDIR /home
-# Clone the working repository
-RUN git clone --recurse-submodules https://github.com/FarStryke21/RL_CoveragePlanning.git
 
-# Install the Environments
-WORKDIR /home/RL_CoveragePlanning/viewpointPlaygroundEnv
-RUN pip install --ignore-installed -e .
+# # Install the RL Zoo
+# WORKDIR /home/packages
+# RUN git clone https://github.com/FarStryke21/rl-baselines3-zoo.git
+# WORKDIR /home/packages/rl-baselines3-zoo
+# RUN pip install --ignore-installed -e .
 
-# Install BaselineZoo
-WORKDIR /home/RL_CoveragePlanning/rl-baselines3-zoo
-RUN pip install --ignore-installed -e .
+# # Install Environment
+# WORKDIR /home/packages
+# RUN git clone https://github.com/FarStryke21/viewpointPlaygroundEnv.git
+# WORKDIR /home/packages/viewpointPlaygroundEnv
+# RUN pip install --ignore-installed -e .
+
+# Install the requisite python packages
+RUN pip install --no-cache-dir --ignore-installed \
+    gym==0.26.2 \
+    "stable-baselines3[extra_no_roms,tests,docs]>=2.3.0a1,<3.0" \
+    pybullet_envs_gymnasium>=0.4.0 \
+    cloudpickle>=2.2.1 \
+    plotly \
+    wandb \
+    moviepy \
+    gymnasium \
+    numpy \
+    open3d==0.18.0 \
+    scipy \
+    matplotlib
+# Install box2d-py separately with verbose output. 
+# It likes to cause problems so this just as a precaution!
+RUN pip install --no-cache-dir box2d-py==2.3.8 -v
 
 # Get Tensorboard
-RUN pip install tensorboard
+RUN pip install --upgrade tensorflow tensorboard
 
+# Copy the entrypoint script into the container
+COPY entrypoint.sh /entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /entrypoint.sh
+
+# Set the entrypoint script to be executed
+ENTRYPOINT ["/entrypoint.sh"]
+
+# Set Working Directory
 WORKDIR /home/dir
 
 # Set the default command to run when starting the container
