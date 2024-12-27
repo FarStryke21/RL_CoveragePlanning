@@ -8,4 +8,7 @@ Start tensorboard for Cartpole Results
 tensorboard --logdir=/home/dir/RL_CoveragePlanning/tensorboard/CartPoleV1
 
 Start Training in Coverage environment
-python train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P
+python train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 100000
+
+Check Results
+python enjoy.py -f logs/ --exp-id 44 --no-render --load-last-checkpoint

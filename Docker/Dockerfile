@@ -77,7 +77,10 @@ RUN pip install --no-cache-dir --ignore-installed \
     numpy \
     open3d==0.18.0 \
     scipy \
-    matplotlib
+    matplotlib \
+    numba \
+    pymeshlab
+    
 # Install box2d-py separately with verbose output. 
 # It likes to cause problems so this just as a precaution!
 RUN pip install --no-cache-dir box2d-py==2.3.8 -v
