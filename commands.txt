@@ -1,6 +1,15 @@
 Start the Docker
 docker run -e DISPLAY=$DISPLAY -v /home/achulawa/rl_viewplanning:/home/dir -it --gpus all --rm --name rlviewplanning-container --network=host rlviewplanning-img
 
+Start the container in detached mode (for long training)
+docker run -e DISPLAY=$DISPLAY -v /home/achulawa/rl_viewplanning:/home/dir -it --gpus all -d --name rlviewplanning-container --network=host rlviewplanning-img
+
+Start a container which has been stopped
+docker start rlviewplanning-container
+
+Stop the container which is running in detached mode
+docker stop rlviewplanning-container
+
 Start training an agent in the CartPole-v1 environment
 python train.py --algo ppo --env CartPole-v1 --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CartPoleV1 -P
 
@@ -10,5 +19,11 @@ tensorboard --logdir=/home/dir/RL_CoveragePlanning/tensorboard/CartPoleV1
 Start Training in Coverage environment
 python train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 100000
 
+Start Python training in No hangup mode
+nohup python -u train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 200000 > /home/dir/RL_CoveragePlanning/terminal_logs/01012025_022600_LongRun.log 2>&1 &
+
 Check Results
 python enjoy.py -f logs/ --exp-id 44 --no-render --load-last-checkpoint
+
+Coverage Env tensorboard
+tensorboard --logdir=/home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0/

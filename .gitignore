@@ -3,3 +3,4 @@ test_models/*.obj
 tensorboard
 scripts/heatmaps
 scripts/logs
+terminal_logs
