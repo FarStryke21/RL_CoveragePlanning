@@ -20,7 +20,10 @@ Start Training in Coverage environment
 python train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 100000
 
 Start Python training in No hangup mode
-nohup python -u train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 200000 > /home/dir/RL_CoveragePlanning/terminal_logs/01012025_022600_LongRun.log 2>&1 &
+nohup python -u train.py --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 500000 > /home/dir/RL_CoveragePlanning/terminal_logs/01102025_115600_ID31_LongRun.log 2>&1 &
+
+Start Python training in No hangup mode (with defined seed)
+nohup python -u train.py --seed 271130030 --tensorboard-log /home/dir/RL_CoveragePlanning/tensorboard/CoverageEnv-v0 -P --save-freq 200000 > /home/dir/RL_CoveragePlanning/terminal_logs/01032025_115500_ID18_LongRun.log 2>&1 &
 
 Check Results
 python enjoy.py -f logs/ --exp-id 44 --no-render --load-last-checkpoint
